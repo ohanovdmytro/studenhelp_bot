@@ -58,6 +58,7 @@ async function handleText(ctx) {
             /* Sending StudentHelp header */
             await ctx.api.sendMessage(user.userId, `<b>StudentHelp:</b>`, {
               parse_mode: "HTML",
+              reply_markup: { remove_keyboard: true },
             });
 
             /* Forwarding message from sender to every user */
@@ -74,7 +75,7 @@ async function handleText(ctx) {
           await ctx.api.sendMessage(
             user.userId,
             `<b>${senderNameHeader}</b>:\n${messageText}`,
-            { parse_mode: "HTML" }
+            { parse_mode: "HTML", reply_markup: { remove_keyboard: true } }
           );
         }
       });

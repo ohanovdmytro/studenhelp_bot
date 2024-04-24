@@ -1,8 +1,8 @@
-storage/messages.json
-storage/names.json
 storage/registered_users.json
+storage/pending_users.json
 
 node_modules
+webAppStudenHelp
 
 # Logs
 logs

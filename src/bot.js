@@ -1,6 +1,7 @@
 const { Bot, HttpError, GrammyError } = require("grammy");
 require("dotenv").config();
 
+const { handleAllow } = require("./commands/commandAllow");
 const { handleStart } = require("./commands/commandStart");
 
 const { handleText } = require("./middleware/handleText");
@@ -12,6 +13,9 @@ const bot = new Bot(process.env.STUDENHELP_TEST_BOT_TOKEN);
 
 /* Handle /start */
 bot.command("start", handleStart);
+
+/* Handle /allow userId,Name command */
+bot.command("allow", handleAllow);
 
 /* Handle sent messages */
 bot.on("message:text", handleText);

@@ -45,6 +45,7 @@ async function handlePhoto(ctx) {
           await ctx.api.sendPhoto(user.userId, photoId, {
             caption: `<b>${senderNameHeader}:</b>`,
             parse_mode: "HTML",
+            reply_markup: { remove_keyboard: true },
           });
         }
       });

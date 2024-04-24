@@ -1,8 +1,11 @@
 const {
   loadRegisteredUsers,
-  senderName,
+  loadPendingUsers,
+
   isRegistered,
-  saveRegisteredUsers,
+  isPending,
+
+  saveNewUser,
 } = require("../helpers/utils");
 
 async function handleStart(ctx) {
@@ -10,28 +13,44 @@ async function handleStart(ctx) {
     const newUserId = ctx.message.from.id;
     const newUsername = ctx.message.from.username;
     const newFirstName = ctx.message.from.first_name;
+
+    const pendingUsers = loadPendingUsers();
     const registeredUsers = loadRegisteredUsers();
 
-    /* Check if user is registered, otherwise - register */
-    if (!isRegistered(registeredUsers, newUserId)) {
-      registeredUsers.push({
+    /* Check if user is  in pending or registered, otherwise - ask Viktor */
+    if (
+      !isPending(pendingUsers, newUserId) &&
+      !isRegistered(registeredUsers, newUserId)
+    ) {
+      /* Push user to pending */
+      pendingUsers.push({
         userId: newUserId,
         username: newUsername,
         name: newFirstName,
+        subjects: [],
       });
-      saveRegisteredUsers(registeredUsers);
 
-      const yourNameHeader = senderName(registeredUsers, newUserId);
-      await ctx.reply(`Ви зареєстровані, Ваше ім'я: ${yourNameHeader}`);
+      /* Push user to pending users */
+      saveNewUser(pendingUsers);
+
+      await ctx.reply(
+        `Напишіть @Viktor_Rachuk і очікуйте на підтвердження початку роботи.`
+      );
 
       /* Logger */
-      console.log(`${new Date()} -- User ${newUserId} is registered`);
-    } else {
-      await ctx.reply("Ви вже зареєстровані.");
+      console.log(`${new Date()} -- User ${newUserId} is in the bot`);
+    } else if (
+      isPending(pendingUsers, newUserId) &&
+      !isRegistered(registeredUsers, newUserId)
+    ) {
+      await ctx.reply(`Доступ іще не активовано. Звʼязок: @Viktor_Rachuk`);
+    } else if (isRegistered(registeredUsers, newUserId)) {
+      await ctx.reply("Ви вже зареєстровані.", {
+        reply_markup: { remove_keyboard: true },
+      });
     }
   } catch (error) {
     console.error("Error registering: ", error.message);
-    await ctx.reply("Error occurred when registering.");
   }
 }
 
