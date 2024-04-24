@@ -1,4 +1,4 @@
-const { Bot, HttpError, GrammyError } = require("grammy");
+const { Bot } = require("grammy");
 require("dotenv").config();
 
 const { commandAllow } = require("./commands/commandAllow");
@@ -12,7 +12,7 @@ const { handleWebAppData } = require("./middleware/handleWebAppData");
 
 const { handleError } = require("./helpers/handleError");
 
-const bot = new Bot(process.env.STUDENHELP_TEST_BOT_TOKEN);
+const bot = new Bot(process.env.STUDENHELP_BOT_TOKEN);
 
 /* Handle /start */
 bot.command("start", commandStart);
@@ -21,7 +21,7 @@ bot.command("start", commandStart);
 bot.command("allow", commandAllow);
 
 /* Handle /subjects userId command */
-// bot.command("subjects", commandSubjects);
+bot.command("subjects", commandSubjects);
 
 /* Handle sent messages */
 bot.on("message:text", handleText);

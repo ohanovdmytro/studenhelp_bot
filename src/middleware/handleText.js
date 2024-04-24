@@ -3,9 +3,10 @@ const {
   senderName,
   isRegistered,
   studhelpSender,
+  checkForSubjectKeywords,
 } = require("../helpers/utils");
 
-const studentHelpChatId = process.env.STUDENHELP_TEST_CHAT_ID;
+const studentHelpChatId = process.env.STUDENHELP_CHAT_ID;
 
 async function handleText(ctx) {
   /* Pin message */
@@ -57,20 +58,24 @@ async function handleText(ctx) {
         if (user.userId !== senderId) {
           /* Check if message is from StudentHelp */
           if (forwardId === Number(studentHelpChatId)) {
-            isStudentHelp = await studhelpSender({
-              ctx,
-              senderId,
-              user,
-            });
-            return;
+            const filters = checkForSubjectKeywords(messageText, user.subjects);
+            console.log(filters);
+            if (filters) {
+              isStudentHelp = await studhelpSender({
+                ctx,
+                senderId,
+                user,
+              });
+              // return;
+            }
+          } else {
+            /* Send usual senders message */
+            await ctx.api.sendMessage(
+              user.userId,
+              `<b>${senderNameHeader}</b>:\n${messageText}`,
+              { parse_mode: "HTML", reply_markup: { remove_keyboard: true } }
+            );
           }
-
-          /* Send sender message */
-          await ctx.api.sendMessage(
-            user.userId,
-            `<b>${senderNameHeader}</b>:\n${messageText}`,
-            { parse_mode: "HTML", reply_markup: { remove_keyboard: true } }
-          );
         }
       });
 

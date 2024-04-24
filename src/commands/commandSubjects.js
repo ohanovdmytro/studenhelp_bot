@@ -31,7 +31,7 @@ async function commandSubjects(ctx) {
         /* Inform the user */
         await ctx.api.sendMessage(
           registeredUserObject.userId,
-          `Фільтри додані, тепер Ви отримуватимете повідомлення по своїм предметам.`,
+          `Дякую! Ваші предмети збережені, тепер Вам надходитимуть замовлення лише з вказаних предметів.`,
           { reply_markup: { remove_keyboard: true } }
         );
 
