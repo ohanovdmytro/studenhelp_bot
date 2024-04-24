@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.4.5",
+    "googleapis": "^134.0.0",
     "grammy": "^1.21.1",
     "random-js": "^2.1.0"
   },

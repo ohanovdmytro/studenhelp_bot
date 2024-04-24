@@ -1,6 +1,6 @@
 const { HttpError, GrammyError } = require("grammy");
 
-async function handleError() {
+async function handleError(err) {
   const ctx = err.ctx;
   console.error(`Error while handling update ${ctx.update.update_id}:`);
   const e = err.error;

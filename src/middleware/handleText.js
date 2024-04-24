@@ -1,8 +1,11 @@
 const {
-  loadRegisteredUsers,
+  getRegisteredUsers,
   senderName,
   isRegistered,
+  studhelpSender,
 } = require("../helpers/utils");
+
+const studentHelpChatId = process.env.STUDENHELP_TEST_CHAT_ID;
 
 async function handleText(ctx) {
   /* Pin message */
@@ -10,7 +13,7 @@ async function handleText(ctx) {
     try {
       const senderId = ctx.message.from.id;
       const pinnedMessage = ctx.message.pinned_message;
-      const registeredUsers = loadRegisteredUsers();
+      const registeredUsers = getRegisteredUsers();
       // console.log(pinnedMessage.message_id - 2);
 
       // try {
@@ -43,7 +46,7 @@ async function handleText(ctx) {
   let isStudentHelp = false;
 
   try {
-    const registeredUsers = await loadRegisteredUsers();
+    const registeredUsers = await getRegisteredUsers();
 
     /* Check if sender is registered */
     if (isRegistered(registeredUsers, senderId)) {
@@ -53,21 +56,12 @@ async function handleText(ctx) {
       registeredUsers.map(async (user) => {
         if (user.userId !== senderId) {
           /* Check if message is from StudentHelp */
-          if (forwardId === Number(process.env.STUDENHELP_TEST_CHAT_ID)) {
-            isStudentHelp = true;
-            /* Sending StudentHelp header */
-            await ctx.api.sendMessage(user.userId, `<b>StudentHelp:</b>`, {
-              parse_mode: "HTML",
-              reply_markup: { remove_keyboard: true },
-            });
-
-            /* Forwarding message from sender to every user */
-            await ctx.api.copyMessage(
-              user.userId,
+          if (forwardId === Number(studentHelpChatId)) {
+            isStudentHelp = await studhelpSender({
+              ctx,
               senderId,
-              ctx.message.message_id
-            );
-
+              user,
+            });
             return;
           }
 

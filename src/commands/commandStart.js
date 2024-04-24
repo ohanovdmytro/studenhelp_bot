@@ -1,6 +1,6 @@
 const {
-  loadRegisteredUsers,
-  loadPendingUsers,
+  getRegisteredUsers,
+  getPendingUsers,
 
   isRegistered,
   isPending,
@@ -8,14 +8,14 @@ const {
   saveNewUser,
 } = require("../helpers/utils");
 
-async function handleStart(ctx) {
+async function commandStart(ctx) {
   try {
     const newUserId = ctx.message.from.id;
     const newUsername = ctx.message.from.username;
     const newFirstName = ctx.message.from.first_name;
 
-    const pendingUsers = loadPendingUsers();
-    const registeredUsers = loadRegisteredUsers();
+    const pendingUsers = getPendingUsers();
+    const registeredUsers = getRegisteredUsers();
 
     /* Check if user is  in pending or registered, otherwise - ask Viktor */
     if (
@@ -55,5 +55,5 @@ async function handleStart(ctx) {
 }
 
 module.exports = {
-  handleStart,
+  commandStart,
 };

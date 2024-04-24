@@ -1,6 +1,8 @@
 storage/registered_users.json
 storage/pending_users.json
 
+credentials.json
+
 node_modules
 webAppStudenHelp
 
