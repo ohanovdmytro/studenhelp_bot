@@ -1,12 +1,8 @@
 const {
   getRegisteredUsers,
   senderName,
-  isRegistered,
-  studhelpSender,
-  checkForSubjectKeywords,
+  isRegistered
 } = require("../helpers/utils");
-
-const studentHelpChatId = process.env.STUDENHELP_CHAT_ID;
 
 async function handleText(ctx) {
   /* Pin message */
@@ -41,10 +37,8 @@ async function handleText(ctx) {
     }
   }
 
-  const senderId = ctx.message.from.id;
+  const senderId = ctx.from.id;
   const messageText = ctx.message.text;
-  const forwardId = ctx.msg.forward_origin?.sender_user?.id;
-  let isStudentHelp = false;
 
   try {
     const registeredUsers = await getRegisteredUsers();
@@ -56,39 +50,19 @@ async function handleText(ctx) {
       /* Iterate through all users */
       registeredUsers.map(async (user) => {
         if (user.userId !== senderId) {
-          /* Check if message is from StudentHelp */
-          if (forwardId === Number(studentHelpChatId)) {
-            const filters = checkForSubjectKeywords(messageText, user.subjects);
-            console.log(filters);
-            if (filters) {
-              isStudentHelp = await studhelpSender({
-                ctx,
-                senderId,
-                user,
-              });
-              // return;
-            }
-          } else {
-            /* Send usual senders message */
-            await ctx.api.sendMessage(
-              user.userId,
-              `<b>${senderNameHeader}</b>:\n${messageText}`,
-              { parse_mode: "HTML", reply_markup: { remove_keyboard: true } }
-            );
-          }
+          /* Send usual senders message */
+          await ctx.api.sendMessage(
+            user.userId,
+            `<b>${senderNameHeader}</b>:\n${messageText}`,
+            { parse_mode: "HTML", reply_markup: { remove_keyboard: true } }
+          );
         }
       });
 
       /* Logger */
-      if (isStudentHelp) {
-        console.log(
-          `${new Date()} -- Got a message from StudentHelp ${messageText}`
-        );
-      } else {
-        console.log(
-          `${new Date()} -- User ${senderId} sent a new message: ${messageText}`
-        );
-      }
+      console.log(
+        `${new Date()} -- User ${senderId} sent a new message: ${messageText}`
+      );
     } else {
       await ctx.reply(
         "Ви не зареєстровані. Надішліть /start щоб зареєструватись."
