@@ -1,5 +1,7 @@
 const { google } = require("googleapis");
 
+const fs = require("fs");
+
 const { isRegistered, isPending } = require("./isFunctions.js");
 const {
   getRegisteredUsers,
@@ -59,7 +61,7 @@ async function checkForCustomer(message) {
 
   try {
     const spreadsheetId = process.env.SHEET_ID;
-    const range = "StudentHelp, квітень 2024!B2:D";
+    const range = "Замовлення!C2:E";
 
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
@@ -67,14 +69,19 @@ async function checkForCustomer(message) {
     });
 
     const rows = response.data.values;
+    rows.shift();
 
     for (const row of rows) {
       const customer = row[2];
       const helper = row[0];
 
+      if (customer === undefined || helper === undefined) {
+        continue;
+      }
+
       if (
-        message.toUpperCase().includes(customer) ||
-        message.toUpperCase().includes(`${customer}.`)
+        message.toUpperCase().includes(customer.toUpperCase()) ||
+        message.toUpperCase().includes(`${customer.toUpperCase()}.`)
       ) {
         return {
           customer: customer,
